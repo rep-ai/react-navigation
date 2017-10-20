@@ -49,7 +49,7 @@ type State = {
   scenes: Array<NavigationScene>,
 };
 
-const { PropTypes } = React;
+import PropTypes from 'prop-types'
 
 const DefaultTransitionSpec = TransitionConfigs.DefaultTransitionSpec;
 
