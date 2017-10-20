@@ -9,6 +9,8 @@ For our chat app, we want to put several tabs on the first screen, to view recen
 Lets create a new `TabNavigator` in our `App.js`:
 
 ```js
+import { TabNavigator } from "react-navigation";
+
 class RecentChatsScreen extends React.Component {
   render() {
     return <Text>List of recent chats</Text>
@@ -51,9 +53,15 @@ const SimpleApp = StackNavigator({
 Because `MainScreenNavigator` is being used as a screen, we can give it `navigationOptions`:
 
 ```js
-MainScreenNavigator.navigationOptions = {
-  title: 'My Chats',
-};
+const SimpleApp = StackNavigator({
+  Home: { 
+    screen: MainScreenNavigator,
+    navigationOptions: {
+      title: 'My Chats',
+    },
+  },
+  Chat: { screen: ChatScreen },
+})
 ```
 
 Lets also add a button to each tab that links to a chat:
@@ -69,4 +77,46 @@ Now we have put one navigator inside another, and we can `navigate` between navi
 
 ```phone-example
 nested
+```
+
+## Nesting a Navigator in a Component
+Sometimes it is desirable to nest a navigator that is wrapped in a component. This is useful in cases where the navigator only takes up part of the screen. For the child navigator to be wired into the navigation tree, it needs the `navigation` property from the parent navigator.
+
+```js
+const SimpleApp = StackNavigator({
+  Home: { screen: NavigatorWrappingScreen },
+  Chat: { screen: ChatScreen },
+});
+```
+In this case, the NavigatorWrappingScreen is not a navigator, but it renders a navigator as part of its output.
+
+If this navigator renders blank then change `<View>` to `<View style={{flex: 1}}>`.
+
+```js
+class NavigatorWrappingScreen extends React.Component {
+  render() {
+    return (
+      <View>
+        <SomeComponent/>
+        <MainScreenNavigator/>
+      </View>
+    );
+  }
+}
+```
+
+To wire `MainScreenNavigator` into the navigation tree, we assign its `router` to the wrapping component. This makes `NavigatorWrappingScreen` "navigation aware", which tells the parent navigator to pass the navigation object down. Since the `NavigatorWrappingScreen`'s `router` is overridden with the child navigator's `router`, the child navigator will receive the needed `navigation`.
+
+```js
+class NavigatorWrappingScreen extends React.Component {
+  render() {
+    return (
+      <View>
+        <SomeComponent/>
+        <MainScreenNavigator navigation={this.props.navigation}/>
+      </View>
+    );
+  }
+}
+NavigatorWrappingScreen.router = MainScreenNavigator.router;
 ```

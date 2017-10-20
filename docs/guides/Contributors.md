@@ -2,56 +2,65 @@
 
 ## Environment
 
-React navigation was initially developed on macOS 10.12, with node 7+, and react-native v0.39+. Please open issues when uncovering problems in different environments.
+React Navigation was initially developed on macOS v10.12, with node v7+, and react-native v0.39+.
+It's also been verified to work using Boron LTS (node v6.11.1 with npm v3.10.10), and using node v8.1.4 with npm v4.6.1.
+Please open issues if you uncover problems in different environments.
+
+In all of the below commands, you can use `npm` instead of `yarn` if you prefer.
+[Yarn](https://yarnpkg.com/en/) is generally much faster, but some people still prefer `npm`.
+They should work the same here.
 
 ## Development
 
-### 0. Fork the repo
+### Fork the repo
 
 - Fork [`react-navigation`](https://github.com/react-community/react-navigation) on GitHub
+- Run these commands in the terminal to download locally and install it:
 
-- Run these commands in the terminal:
+    ```bash
+    git clone https://github.com/<USERNAME>/react-navigation.git
+    cd react-navigation
+    git remote add upstream https://github.com/react-community/react-navigation.git
+    yarn install
+    ```
 
-```
-git clone https://github.com/<USERNAME>/react-navigation.git`
-cd react-navigation
-git remote add upstream https://github.com/react-community/react-navigation.git
-npm install
-```
+### Run the example app
 
-
-### 1. Run the native playground
-
-```
+```bash
+yarn install
 cd examples/NavigationPlayground
-npm install
-cd ../..
-npm start
-
-# In a seperate terminal tab:
-npm run run-playground-android
-npm run run-playground-ios
+yarn install
+yarn start
 ```
 
-### 2. Run the website
+You will be given a URL to open in your Expo app. You can get Expo [here](https://docs.expo.io/versions/v18.0.0/introduction/installation.html) if you don't have it yet.
+
+If you run into any issues, please try the following to start fresh:
+
+```bash
+watchman watch-del-all
+yarn start -- --reset-cache
+```
+
+### Run the website
 
 For development mode and live-reloading:
 
-```
+```bash
 cd website
-npm install
-npm run start
+yarn install
+yarn start
 ```
 
 To run the website in production mode with server rendering:
 
-```
-npm run prod
+```bash
+yarn run prod
 ```
 
-### 3. Run tests, run flow
+### Run tests and type-checking
 
-```
+```bash
 jest
 flow
 ```
@@ -60,13 +69,11 @@ Tests must pass for your changes to be accepted and merged.
 
 Flow is not yet passing, but your code should be flow checked and we expect that your changes do not introduce any flow errors.
 
-
-### 4. Developing Docs
+### Developing Docs
 
 The docs are indexed in [App.js](https://github.com/react-community/react-navigation/blob/master/website/src/App.js), where all the pages are declared alongside the titles. To test the docs, follow the above instructions for running the website. Changing existing markdown files should not require any testing.
 
 The markdown from the `docs` folder gets generated and dumped into a json file as a part of the build step. To see updated docs appear in the website, re-run the build step by running `npm run build-docs` from the `react-navigation` root folder.
-
 
 ## Submitting Contributions
 
@@ -86,5 +93,7 @@ Simple bug fixes are welcomed in pull requests! Please check for duplicate PRs b
 
 #### Make sure to sync up with the state of upstream before submitting a PR:
 
-- `git fetch upstream/master`
-- `git rebase upstream/master master`
+```bash
+git fetch upstream
+git rebase upstream/master
+```

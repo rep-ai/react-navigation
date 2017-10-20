@@ -1,21 +1,19 @@
 # TabNavigator
 
-Used to easily set up a screen with several tabs with a TabRouter.
+Used to easily set up a screen with several tabs with a TabRouter. For a live example please see [our expo demo](https://exp.host/@react-navigation/NavigationPlayground).
 
 ```js
 class MyHomeScreen extends React.Component {
   static navigationOptions = {
-    tabBar: {
-      label: 'Home',
-      // Note: By default the icon is only shown on iOS. Search the showIcon option below.
-      icon: ({ tintColor }) => (
-        <Image
-          source={require('./chats-icon.png')}
-          style={[styles.icon, {tintColor: tintColor}]}
-        />
-      ),
-    },
-  }
+    tabBarLabel: 'Home',
+    // Note: By default the icon is only shown on iOS. Search the showIcon option below.
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+        source={require('./chats-icon.png')}
+        style={[styles.icon, {tintColor: tintColor}]}
+      />
+    ),
+  };
 
   render() {
     return (
@@ -29,16 +27,14 @@ class MyHomeScreen extends React.Component {
 
 class MyNotificationsScreen extends React.Component {
   static navigationOptions = {
-    tabBar: {
-      label: 'Notifications',
-      icon: ({ tintColor }) => (
-        <Image
-          source={require('./notif-icon.png')}
-          style={[styles.icon, {tintColor: tintColor}]}
-        />
-      ),
-    },
-  }
+    tabBarLabel: 'Notifications',
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+        source={require('./notif-icon.png')}
+        style={[styles.icon, {tintColor: tintColor}]}
+      />
+    ),
+  };
 
   render() {
     return (
@@ -65,6 +61,8 @@ const MyApp = TabNavigator({
     screen: MyNotificationsScreen,
   },
 }, {
+  tabBarPosition: 'top',
+  animationEnabled: true,
   tabBarOptions: {
     activeTintColor: '#e91e63',
   },
@@ -83,13 +81,13 @@ The route configs object is a mapping from route name to a route config, which t
 
 ### TabNavigatorConfig
 
-- `tabBarComponent` - component to use as the tab bar, e.g. `TabView.TabBarBottom`
-(this is the default on iOS), `TabView.TabBarTop`
+- `tabBarComponent` - component to use as the tab bar, e.g. `TabBarBottom`
+(this is the default on iOS), `TabBarTop`
 (this is the default on Android)
 - `tabBarPosition` - position of the tab bar, can be `'top'` or `'bottom'`
 - `swipeEnabled` - whether to allow swiping between tabs
 - `animationEnabled` - whether to animate when changing tabs
-- `lazyLoad` - whether to lazily render tabs as needed as opposed to rendering them upfront
+- `lazy` - whether to lazily render tabs as needed as opposed to rendering them upfront
 - `tabBarOptions` - configure the tab bar, see below.
 
 Several options get passed to the underlying router to modify navigation logic:
@@ -108,6 +106,8 @@ Several options get passed to the underlying router to modify navigation logic:
 - `showLabel` - whether to show label for tab, default is true
 - `style` - style object for the tab bar
 - `labelStyle` - style object for the tab label
+- `tabStyle` - style object for the tab
+- `allowFontScaling` - whether label font should scale to respect Text Size accessibility settings, default is true
 
 Example:
 
@@ -136,7 +136,9 @@ tabBarOptions: {
 - `tabStyle` - style object for the tab
 - `indicatorStyle` - style object for the tab indicator (line at the bottom of the tab)
 - `labelStyle` - style object for the tab label
+- `iconStyle` - style object for the tab icon
 - `style` - style object for the tab bar
+- `allowFontScaling` - whether label font should scale to respect Text Size accessibility settings, default is true
 
 Example:
 
@@ -144,6 +146,9 @@ Example:
 tabBarOptions: {
   labelStyle: {
     fontSize: 12,
+  },
+  tabStyle: {
+    width: 100,    
   },
   style: {
     backgroundColor: 'blue',
@@ -153,46 +158,39 @@ tabBarOptions: {
 
 ### Screen Navigation Options
 
-Usually you define static `navigationOptions` on your screen component. For example:
+#### `title`
 
-```jsx
-class ProfileScreen extends React.Component {
+Generic title that can be used as a fallback for `headerTitle` and `tabBarLabel`
 
-  static navigationOptions = {
+#### `tabBarVisible`
 
-    title: ({ state }) => `${state.params.name}'s Profile!`,
+True or false to show or hide the tab bar, if not set then defaults to true
 
-    tabBar: ({ state, setParams }) => ({
-      icon: (
-        <Image src={require('./my-icon.png')} />
-      ),
-    }),
-  };
-  ...
-```
+#### `tabBarIcon`
 
-All `navigationOptions` for the `TabNavigator`:
+React Element or a function that given `{ focused: boolean, tintColor: string }` returns a React.Element, to display in tab bar
 
-- `title` - a title (string) of the scene
-- `tabBar` - a config object for the tab bar:
-  - `visible` - Boolean toggle of tab bar visibility
-  - `icon` - React Element or a function that given `{ focused: boolean, tintColor: string }` returns a React.Element, to display in tab bar
-  - `label` - Title string of a tab displayed in the tab bar. When undefined, scene `title` is used. To hide, see `tabBarOptions.showLabel` in the previous section
-  
+#### `tabBarLabel`
+
+Title string of a tab displayed in the tab bar or React Element or a function that given `{ focused: boolean, tintColor: string }` returns a React.Element, to display in tab bar. When undefined, scene `title` is used. To hide, see `tabBarOptions.showLabel` in the previous section.
+
+#### `tabBarOnPress`
+
+Callback to handle tap events; arguments are the `scene: { route, index }` that was tapped and a `jumpToIndex` method that can perform the navigation for you.
+
 ### Navigator Props
 
 The navigator component created by `TabNavigator(...)` takes the following props:
 
-- `screenProps` - Pass down extra options to child screens, for example:
+- `screenProps` - Pass down extra options to child screens and navigation options, for example:
 
 
  ```jsx
  const TabNav = TabNavigator({
    // config
  });
- 
+
  <TabNav
    screenProps={/* this prop will get passed to the screen components as this.props.screenProps */}
  />
  ```
- 

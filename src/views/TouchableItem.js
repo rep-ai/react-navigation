@@ -17,38 +17,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type {
-  Style,
-} from '../TypeDefinition';
+import type { ViewStyleProp } from '../TypeDefinition';
 
 const ANDROID_VERSION_LOLLIPOP = 21;
 
 type Props = {
-  onPress: Function,
-  delayPressIn?: number;
-  borderless?: boolean;
-  pressColor?: string;
-  activeOpacity?: number;
-  children?: React.Element<*>;
-  style?: Style;
+  onPress: () => void,
+  delayPressIn?: number,
+  borderless?: boolean,
+  pressColor?: string,
+  activeOpacity?: number,
+  children?: React.Element<*>,
+  style?: ViewStyleProp,
 };
 
 type DefaultProps = {
-  pressColor: string;
+  pressColor: string,
 };
 
-export default class TouchableItem extends Component<DefaultProps, Props, void> {
-  static propTypes = {
-    onPress: PropTypes.func,
-    delayPressIn: PropTypes.number,
-    borderless: PropTypes.bool,
-    pressColor: PropTypes.string,
-    activeOpacity: PropTypes.number,
-    children: PropTypes.node.isRequired,
-    style: View.propTypes.style,
-  };
-
+export default class TouchableItem extends Component<
+  DefaultProps,
+  Props,
+  void
+> {
   static defaultProps = {
+    borderless: false,
     pressColor: 'rgba(0, 0, 0, .32)',
   };
 
@@ -61,19 +54,19 @@ export default class TouchableItem extends Component<DefaultProps, Props, void> 
      * platform design guidelines.
      * We need to pass the background prop to specify a borderless ripple effect.
      */
-    if (Platform.OS === 'android' && Platform.Version >= ANDROID_VERSION_LOLLIPOP) {
+    if (
+      Platform.OS === 'android' &&
+      Platform.Version >= ANDROID_VERSION_LOLLIPOP
+    ) {
       const { style, ...rest } = this.props; // eslint-disable-line no-unused-vars
-
       return (
         <TouchableNativeFeedback
           {...rest}
           style={null}
-          background={
-            TouchableNativeFeedback.Ripple(
-              this.props.pressColor,
-              this.props.borderless
-            )
-          }
+          background={TouchableNativeFeedback.Ripple(
+            this.props.pressColor || '',
+            this.props.borderless || false
+          )}
         >
           <View style={this.props.style}>
             {Children.only(this.props.children)}
@@ -83,9 +76,7 @@ export default class TouchableItem extends Component<DefaultProps, Props, void> 
     }
 
     return (
-      <TouchableOpacity {...this.props}>
-        {this.props.children}
-      </TouchableOpacity>
+      <TouchableOpacity {...this.props}>{this.props.children}</TouchableOpacity>
     );
   }
 }

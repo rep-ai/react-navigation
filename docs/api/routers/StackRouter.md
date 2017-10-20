@@ -28,7 +28,7 @@ const MyApp = StackRouter({ // This is the RouteConfig:
     screen: ProfileScreen,
     path: 'profile/:name',
   },
-  Settings {
+  Settings: {
     // This can be handy to lazily require a screen:
     getScreen: () => require('Settings').default,
     // Note: Child navigators cannot be configured using getScreen because
@@ -50,7 +50,7 @@ Each item in the config may have the following:
 
 Config options that are also passed to the stack router.
 
-- `initalRouteName` - The routeName for the default route when the stack first loads
+- `initialRouteName` - The routeName for the default route when the stack first loads
 - `initialRouteParams` - Default params of the initial route
 - `paths` - Provide a mapping of routeName to path config, which overrides the paths set in the routeConfigs.
 
