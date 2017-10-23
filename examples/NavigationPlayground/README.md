@@ -2,8 +2,16 @@
 
 A playground for experimenting with react-navigation in a pure-JS React Native app.
 
-## Usage
+## Setup:
 
-Please see the [Contributors Guide](https://github.com/react-community/react-navigation/blob/master/docs/guides/Contributors.md#development) for instructions on running these example apps.
-
-You can view this example application directly on your phone by visiting [our expo demo](https://exp.host/@react-navigation/NavigationPlayground).
+```
+cd react-navigation
+npm install
+cd examples/NavigationPlayground
+npm install
+cd ../..
+react-native start
+cd examples/NavigationPlayground
+react-native run-ios # ignore packager starting error
+react-native run-android # ignore packager starting error
+```

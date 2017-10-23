@@ -1,27 +1,27 @@
 /* @flow */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import type {
   NavigationScreenProp,
+  NavigationState,
   NavigationRoute,
   NavigationAction,
-  NavigationNavigatorProps,
 } from '../TypeDefinition';
 
-type Props<O> = {
-  screenProps?: {},
-  navigation: NavigationScreenProp<NavigationRoute, NavigationAction>,
-  component: ReactClass<NavigationNavigatorProps<O, NavigationRoute>>,
+type Props = {
+  screenProps?: {};
+  navigation: NavigationScreenProp<NavigationRoute, NavigationAction>;
+  component: ReactClass<*>;
 };
 
-export default class SceneView<O> extends PureComponent<void, Props<O>, void> {
+export default class SceneView extends PureComponent<void, Props, void> {
   static childContextTypes = {
-    navigation: PropTypes.object.isRequired,
+    navigation: React.PropTypes.object.isRequired,
   };
 
-  props: Props<O>;
+  props: Props;
 
   getChildContext() {
     return {
@@ -30,8 +30,17 @@ export default class SceneView<O> extends PureComponent<void, Props<O>, void> {
   }
 
   render() {
-    const { screenProps, navigation, component: Component } = this.props;
+    const {
+      screenProps,
+      navigation,
+      component: Component,
+    } = this.props;
 
-    return <Component screenProps={screenProps} navigation={navigation} />;
+    return (
+      <Component
+        screenProps={screenProps}
+        navigation={navigation}
+      />
+    );
   }
 }

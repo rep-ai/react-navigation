@@ -3,58 +3,51 @@
 import React from 'react';
 import createNavigationContainer from '../createNavigationContainer';
 import createNavigator from './createNavigator';
-import CardStackTransitioner from '../views/CardStack/CardStackTransitioner';
+import CardStack from '../views/CardStack';
 import StackRouter from '../routers/StackRouter';
-import NavigatorTypes from './NavigatorTypes';
 
 import type {
+  NavigationContainerConfig,
+  NavigationStackRouterConfig,
+  NavigationStackViewConfig,
   NavigationRouteConfigMap,
-  StackNavigatorConfig,
 } from '../TypeDefinition';
 
-export default (
-  routeConfigMap: NavigationRouteConfigMap,
-  stackConfig: StackNavigatorConfig = {}
-) => {
+export type StackNavigatorConfig =
+  & NavigationContainerConfig
+  & NavigationStackViewConfig
+  & NavigationStackRouterConfig;
+
+export default (routeConfigMap: NavigationRouteConfigMap, stackConfig: StackNavigatorConfig = {}) => {
   const {
+    containerOptions,
     initialRouteName,
     initialRouteParams,
     paths,
+    headerComponent,
     headerMode,
     mode,
     cardStyle,
-    transitionConfig,
     onTransitionStart,
     onTransitionEnd,
     navigationOptions,
   } = stackConfig;
-
   const stackRouterConfig = {
     initialRouteName,
     initialRouteParams,
     paths,
     navigationOptions,
   };
-
   const router = StackRouter(routeConfigMap, stackRouterConfig);
-
-  // Create a navigator with CardStackTransitioner as the view
-  const navigator = createNavigator(
-    router,
-    routeConfigMap,
-    stackConfig,
-    NavigatorTypes.STACK
-  )((props: *) => (
-    <CardStackTransitioner
+  return createNavigationContainer(createNavigator(router)(props => (
+    <CardStack
       {...props}
+      headerComponent={headerComponent}
       headerMode={headerMode}
       mode={mode}
       cardStyle={cardStyle}
-      transitionConfig={transitionConfig}
       onTransitionStart={onTransitionStart}
       onTransitionEnd={onTransitionEnd}
     />
-  ));
-
-  return createNavigationContainer(navigator);
+  )), containerOptions);
 };

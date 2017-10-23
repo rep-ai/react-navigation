@@ -3,8 +3,14 @@
  */
 
 import React from 'react';
-import { Button, ScrollView } from 'react-native';
-import { StackNavigator, TabNavigator } from 'react-navigation';
+import {
+  Button,
+  ScrollView,
+} from 'react-native';
+import {
+  StackNavigator,
+  TabNavigator,
+} from 'react-navigation';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SampleText from './SampleText';
@@ -14,22 +20,28 @@ const MyNavScreen = ({ navigation, banner }) => (
     <SampleText>{banner}</SampleText>
     <Button
       onPress={() => navigation.navigate('Profile', { name: 'Jordan' })}
-      title="Open profile screen"
+      title="Go to a profile screen"
     />
     <Button
       onPress={() => navigation.navigate('NotifSettings')}
-      title="Open notifications screen"
+      title="Go to notification settings"
     />
     <Button
-      onPress={() => navigation.navigate('SettingsTab')}
-      title="Go to settings tab"
+      onPress={() => navigation.navigate('Settings')}
+      title="Go to settings"
     />
-    <Button onPress={() => navigation.goBack(null)} title="Go back" />
+    <Button
+      onPress={() => navigation.goBack(null)}
+      title="Go back"
+    />
   </ScrollView>
 );
 
 const MyHomeScreen = ({ navigation }) => (
-  <MyNavScreen banner="Home Screen" navigation={navigation} />
+  <MyNavScreen
+    banner="Home Screen"
+    navigation={navigation}
+  />
 );
 
 const MyProfileScreen = ({ navigation }) => (
@@ -38,13 +50,22 @@ const MyProfileScreen = ({ navigation }) => (
     navigation={navigation}
   />
 );
+MyProfileScreen.navigationOptions = {
+  title: ({ state }) => `${state.params.name}'s Profile!`,
+};
 
 const MyNotificationsSettingsScreen = ({ navigation }) => (
-  <MyNavScreen banner="Notifications Screen" navigation={navigation} />
+  <MyNavScreen
+    banner="Notification Settings"
+    navigation={navigation}
+  />
 );
 
 const MySettingsScreen = ({ navigation }) => (
-  <MyNavScreen banner="Settings Screen" navigation={navigation} />
+  <MyNavScreen
+    banner="Settings"
+    navigation={navigation}
+  />
 );
 
 const MainTab = StackNavigator({
@@ -52,15 +73,15 @@ const MainTab = StackNavigator({
     screen: MyHomeScreen,
     path: '/',
     navigationOptions: {
-      title: 'Welcome',
+      title: () => 'Welcome',
     },
   },
   Profile: {
     screen: MyProfileScreen,
     path: '/people/:name',
-    navigationOptions: ({ navigation }) => ({
-      title: `${navigation.state.params.name}'s Profile!`,
-    }),
+    navigationOptions: {
+      title: ({ state }) => `${state.params.name}'s Profile!`,
+    },
   },
 });
 
@@ -68,54 +89,55 @@ const SettingsTab = StackNavigator({
   Settings: {
     screen: MySettingsScreen,
     path: '/',
-    navigationOptions: () => ({
-      title: 'Settings',
-    }),
+    navigationOptions: {
+      title: () => 'Settings',
+    },
   },
   NotifSettings: {
     screen: MyNotificationsSettingsScreen,
     navigationOptions: {
-      title: 'Notifications',
+      title: () => 'Notification Settings',
     },
   },
 });
 
-const StacksInTabs = TabNavigator(
-  {
-    MainTab: {
-      screen: MainTab,
-      path: '/',
-      navigationOptions: {
-        tabBarLabel: 'Home',
-        tabBarIcon: ({ tintColor, focused }) => (
+const StacksInTabs = TabNavigator({
+  MainTab: {
+    screen: MainTab,
+    path: '/',
+    navigationOptions: {
+      tabBar: () => ({
+        label: 'Home',
+        icon: ({ tintColor, focused }) => (
           <Ionicons
             name={focused ? 'ios-home' : 'ios-home-outline'}
             size={26}
             style={{ color: tintColor }}
           />
         ),
-      },
+      }),
     },
-    SettingsTab: {
-      screen: SettingsTab,
-      path: '/settings',
-      navigationOptions: {
-        tabBarLabel: 'Settings',
-        tabBarIcon: ({ tintColor, focused }) => (
+  },
+  SettingsTab: {
+    screen: SettingsTab,
+    path: '/settings',
+    navigationOptions: {
+      tabBar: () => ({
+        label: 'Settings',
+        icon: ({ tintColor, focused }) => (
           <Ionicons
             name={focused ? 'ios-settings' : 'ios-settings-outline'}
             size={26}
             style={{ color: tintColor }}
           />
         ),
-      },
+      }),
     },
   },
-  {
-    tabBarPosition: 'bottom',
-    animationEnabled: false,
-    swipeEnabled: false,
-  }
-);
+}, {
+  tabBarPosition: 'bottom',
+  animationEnabled: false,
+  swipeEnabled: false,
+});
 
 export default StacksInTabs;

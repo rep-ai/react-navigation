@@ -53,13 +53,13 @@ StackNavigator({
     // When `ProfileScreen` is loaded by the StackNavigator, it will be given a `navigation` prop.
 
     // Optional: When deep linking or using react-navigation in a web app, this path is used:
-    path: 'people/:name',
+    path: 'people/:username',
     // The action and route params are extracted from the path.
 
     // Optional: Override the `navigationOptions` for the screen
-    navigationOptions: ({navigation}) => ({
-      title: `${navigation.state.params.name}'s Profile'`,
-    }),
+    navigationOptions: {
+      title: ({state}) => `${state.params.username}'s Profile'`,
+    },
   },
 
   ...MyOtherRoutes,
@@ -85,75 +85,49 @@ Visual options:
   - `screen` - Each screen has a header attached to it and the header fades in and out together with the screen. This is a common pattern on Android.
   - `none` - No header will be rendered.
 - `cardStyle` - Use this prop to override or extend the default style for an individual card in stack.
-- `transitionConfig` - Function to return an object that overrides default screen transitions.
 - `onTransitionStart` - Function to be invoked when the card transition animation is about to start.
 - `onTransitionEnd` - Function to be invoked once the card transition animation completes.
 
 
 ### Screen Navigation Options
 
-#### `title`
+Usually you define static `navigationOptions` on your screen component. For example:
 
-String that can be used as a fallback for `headerTitle`. Additionally, will be used as a fallback for `tabBarLabel` (if nested in a TabNavigator) or `drawerLabel` (if nested in a DrawerNavigator). 
+```jsx
+class ProfileScreen extends React.Component {
 
-#### `header`
+  static navigationOptions = {
 
-React Element or a function that given `HeaderProps` returns a React Element, to display as a header. Setting to `null` hides header.
+    title: ({ state }) => `${state.params.name}'s Profile!`,
 
-#### `headerTitle`
+    header: ({ state, setParams }) => ({
+      // Render a button on the right side of the header
+      // When pressed switches the screen to edit mode.
+      right: (
+        <Button
+          title={state.params.editing ? 'Done' : 'Edit'}
+          onPress={() => setParams({editing: state.params.editing ? false : true})}
+        />
+      ),
+    }),
+  };
+  ...
+```
 
-String or React Element used by the header. Defaults to scene `title`
+All `navigationOptions` for the `StackNavigator`:
 
-#### `headerTitleAllowFontScaling`
-
-Whether header title font should scale to respect Text Size accessibility settings. Defaults to true
-
-#### `headerBackTitle`
-
-Title string used by the back button on iOS, or `null` to disable label. Defaults to the previous scene's `headerTitle`
-
-#### `headerTruncatedBackTitle`
-
-Title string used by the back button when `headerBackTitle` doesn't fit on the screen. `"Back"` by default.
-
-#### `headerRight`
-
-React Element to display on the right side of the header
-
-#### `headerLeft`
-
-React Element to display on the left side of the header
-
-#### `headerStyle`
-
-Style object for the header
-
-#### `headerTitleStyle`
-
-Style object for the title component
-
-#### `headerBackTitleStyle`
-
-Style object for the back title
-
-#### `headerTintColor`
-
-Tint color for the header
-
-#### `headerPressColorAndroid`
-
-Color for material ripple (Android >= 5.0 only)
-
-#### `gesturesEnabled`
-
-Whether you can use gestures to dismiss this screen. Defaults to true on iOS, false on Android.
-
-#### `gestureResponseDistance`
-
-Object to override the distance of touch start from the edge of the screen to recognize gestures. It takes the following properties:
-
-- `horizontal` - *number* - Distance for horizontal direction. Defaults to 25.
-- `vertical` - *number* - Distance for vertical direction. Defaults to 135.
+- `title` - a title (string) of the scene
+- `header` - a config object for the header bar:
+  - `visible` - Boolean toggle of header visibility. Only works when `headerMode` is `screen`.
+  - `title` - String or React Element used by the header. Defaults to scene `title`
+  - `backTitle` - Title string used by the back button on iOS or `null` to disable label. Defaults to scene `title`
+  - `right` - React Element to display on the right side of the header
+  - `left` - React Element to display on the left side of the header
+  - `style` - Style object for the header
+  - `titleStyle` - Style object for the title component
+  - `tintColor` - Tint color for the header
+- `cardStack` - a config object for the card stack:
+  - `gesturesEnabled` - Whether you can use gestures to dismiss this screen. Defaults to true on iOS, false on Android
 
 ### Navigator Props
 
@@ -175,47 +149,3 @@ The navigator component created by `StackNavigator(...)` takes the following pro
 ### Examples
 
 See the examples [SimpleStack.js](https://github.com/react-community/react-navigation/tree/master/examples/NavigationPlayground/js/SimpleStack.js) and [ModalStack.js](https://github.com/react-community/react-navigation/tree/master/examples/NavigationPlayground/js/ModalStack.js) which you can run locally as part of the [NavigationPlayground](https://github.com/react-community/react-navigation/tree/master/examples/NavigationPlayground) app.
-
-You can view these examples directly on your phone by visiting [our expo demo](https://exp.host/@react-navigation/NavigationPlayground).
-
-#### Modal StackNavigator with Custom Screen Transitions
-
- ```js
-const ModalNavigator = StackNavigator(
-  {
-    Main: { screen: Main },
-    Login: { screen: Login },
-  },
-  {
-    headerMode: 'none',
-    mode: 'modal',
-    navigationOptions: {
-      gesturesEnabled: false,
-    },
-    transitionConfig: () => ({
-      transitionSpec: {
-        duration: 300,
-        easing: Easing.out(Easing.poly(4)),
-        timing: Animated.timing,
-      },
-      screenInterpolator: sceneProps => {
-        const { layout, position, scene } = sceneProps;
-        const { index } = scene;
-
-        const height = layout.initHeight;
-        const translateY = position.interpolate({
-          inputRange: [index - 1, index, index + 1],
-          outputRange: [height, 0, 0],
-        });
-
-        const opacity = position.interpolate({
-          inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1],
-        });
-
-        return { opacity, transform: [{ translateY }] };
-      },
-    }),
-  }
-);
- ```

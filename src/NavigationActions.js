@@ -1,17 +1,13 @@
-/**
- * @flow
- */
+const namespacedAction = (action: string) => `Navigation/${action}`;
 
-import type { NavigationAction } from './TypeDefinition';
+const BACK = namespacedAction('BACK');
+const INIT = namespacedAction('INIT');
+const NAVIGATE = namespacedAction('NAVIGATE');
+const RESET = namespacedAction('RESET');
+const SET_PARAMS = namespacedAction('SET_PARAMS');
+const URI = namespacedAction('URI');
 
-const BACK = 'Navigation/BACK';
-const INIT = 'Navigation/INIT';
-const NAVIGATE = 'Navigation/NAVIGATE';
-const RESET = 'Navigation/RESET';
-const SET_PARAMS = 'Navigation/SET_PARAMS';
-const URI = 'Navigation/URI';
-
-const createAction = (type: string) => (payload: Object = {}) => ({
+const createAction = (type: string) => (payload: object = {}) => ({
   type,
   ...payload,
 });
@@ -32,23 +28,19 @@ const deprecatedActionMap = {
   Uri: URI,
 };
 
-const mapDeprecatedActionAndWarn = (action: Object) => {
+const mapDeprecatedActionAndWarn = (action: object) => {
   const mappedType = deprecatedActionMap[action.type];
-  if (!mappedType) {
-    return action;
-  }
+  if (!mappedType) { return action; }
 
-  console.warn(
-    [
-      `The action type '${action.type}' has been renamed to '${mappedType}'.`,
-      `'${action.type}' will continue to work while in beta but will be removed`,
-      'in the first major release. Moving forward, you should use the',
-      'action constants and action creators exported by this library in',
-      "the 'actions' object.",
-      'See https://github.com/react-community/react-navigation/pull/120 for',
-      'more details.',
-    ].join(' ')
-  );
+  console.warn([
+    `The action type '${action.type}' has been renamed to '${mappedType}'.`,
+    `'${action.type}' will continue to work while in beta but will be removed`,
+    'in the first major release. Moving forward, you should use the',
+    'action constants and action creators exported by this library in',
+    "the 'actions' object.",
+    'See https://github.com/react-community/react-navigation/pull/120 for',
+    'more details.',
+  ].join(' '));
 
   return {
     ...action,

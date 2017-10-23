@@ -4,39 +4,32 @@ import React from 'react';
 
 import type {
   NavigationRouter,
+  NavigationRoute,
   NavigationNavigator,
   NavigationNavigatorProps,
-  NavigationRouteConfigMap,
 } from '../TypeDefinition';
-
-import type { NavigatorType } from './NavigatorTypes';
 
 /**
  * Creates a navigator based on a router and a view that renders the screens.
  */
-export default function createNavigator<C: *, S, A, NavigatorConfig, Options>(
-  router: NavigationRouter<S, A, Options>,
-  routeConfigs?: NavigationRouteConfigMap,
-  navigatorConfig?: NavigatorConfig,
-  navigatorType?: NavigatorType
-) {
-  return (
-    NavigationView: ReactClass<C>
-  ): NavigationNavigator<C, S, A, Options> => {
+const createNavigator = (router: NavigationRouter) =>
+  (View: NavigationNavigator<*>) => {
     class Navigator extends React.Component {
-      props: NavigationNavigatorProps<Options, S>;
+      props: NavigationNavigatorProps;
 
       static router = router;
 
-      static routeConfigs = routeConfigs;
-      static navigatorConfig = navigatorConfig;
-      static navigatorType = navigatorType;
-
       render() {
-        return <NavigationView {...this.props} router={router} />;
+        return (
+          <View
+            {...this.props}
+            router={router}
+          />
+        );
       }
     }
 
     return Navigator;
   };
-}
+
+export default createNavigator;

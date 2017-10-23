@@ -1,7 +1,5 @@
 # Configuring the Header
 
-Header is only available for StackNavigator.
-
 In the previous example, we created a StackNavigator to display several screens in our app.
 
 
@@ -28,9 +26,13 @@ Next, the header title can be configured to use the screen param:
 
 ```js
 class ChatScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => ({
-    title: `Chat with ${navigation.state.params.user}`,
-  });
+  static navigationOptions = {
+    // // Title may be a simple string:
+    // title: 'Hello',
+
+    // Or the title string may be a function of the navigation prop:
+    title: ({ state }) => `Chat with ${state.params.user}`
+  };
   ...
 }
 ```
@@ -46,7 +48,9 @@ Then we can add a [`header` navigation option](/docs/navigators/navigation-optio
 
 ```js
 static navigationOptions = {
-  headerRight: <Button title="Info" />,
+  header: {
+    right: <Button title="Info" />,
+  },
   ...
 ```
 
@@ -54,23 +58,35 @@ static navigationOptions = {
 header-button
 ```
 
-The navigation options can be defined with a [navigation prop](/docs/navigators/navigation-prop). Let's render a different button based on the route params, and set up the button to call `navigation.setParams` when pressed.
+Just like `title`, the `header` option can be defined as a function of the [navigation prop](/docs/navigators/navigation-prop). Let's render a different button based on the route params, and set up the button to call `navigation.setParams` when pressed.
 
 ```js
-static navigationOptions = ({ navigation }) => {
-  const {state, setParams} = navigation;
-  const isInfo = state.params.mode === 'info';
-  const {user} = state.params;
-  return {
-    title: isInfo ? `${user}'s Contact Info` : `Chat with ${state.params.user}`,
-    headerRight: (
+static navigationOptions = {
+  title: ({ state }) => {
+    if (state.params.mode === 'info') {
+      return `${state.params.user}'s Contact Info`;
+    }
+    return `Chat with ${state.params.user}`;
+  },
+  header: ({ state, setParams }) => {
+    // The navigation prop has functions like setParams, goBack, and navigate.
+    let right = (
       <Button
-        title={isInfo ? 'Done' : `${user}'s info`}
-        onPress={() => setParams({ mode: isInfo ? 'none' : 'info'})}
+        title={`${state.params.user}'s info`}
+        onPress={() => setParams({ mode: 'info' })}
       />
-    ),
-  };
-};
+    );
+    if (state.params.mode === 'info') {
+      right = (
+        <Button
+          title="Done"
+          onPress={() => setParams({ mode: 'none' })}
+        />        
+      );
+    }
+    return { right };
+  },
+  ...
 ```
 
 Now, the header can interact with the screen route/state:
