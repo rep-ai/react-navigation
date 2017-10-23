@@ -10,6 +10,7 @@
  * of TouchableNativeFeedback.
  */
 import React, { Component, Children } from 'react';
+import PropTypes from 'prop-types';
 import {
   Platform,
   TouchableNativeFeedback,

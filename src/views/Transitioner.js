@@ -40,12 +40,9 @@ type State = {
   scenes: Array<NavigationScene>,
 };
 
-// Used for all animations unless overriden
-const DefaultTransitionSpec = ({
-  duration: 250,
-  easing: Easing.inOut(Easing.ease),
-  timing: Animated.timing,
-}: NavigationTransitionSpec);
+import PropTypes from 'prop-types'
+
+const DefaultTransitionSpec = TransitionConfigs.DefaultTransitionSpec;
 
 class Transitioner extends React.Component<*, Props, State> {
   _onLayout: (event: any) => void;
