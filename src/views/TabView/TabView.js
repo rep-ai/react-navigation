@@ -200,7 +200,7 @@ class TabView extends PureComponent<void, Props, void> {
         renderScene={this._renderScene}
         renderPager={this._renderPager}
         configureTransition={configureTransition}
-        onRequestChangeTab={this._handlePageChanged}
+        onIndexChange={this._handlePageChanged}
       />
     );
   }
